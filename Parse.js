@@ -13,7 +13,7 @@ let selector = '';
 let collectingSelector = true;
 let name = '';
 let value = '';
-let collectingName = true;
+let collectingName = false;
 let collectingValue = false;
 
 
@@ -23,6 +23,7 @@ for (let i = 0; i < input.length; i++) {
         output.selector = selector.trim();
         collectingSelector = false;
         collectingName = true;
+        continue
     }
     if (collectingSelector) {
         selector += input[i];
@@ -30,6 +31,18 @@ for (let i = 0; i < input.length; i++) {
     if (input[i] === ':') {
         collectingValue = true;
         collectingName = false;
+        continue;
+    }
+    if (input[i] === ';') {
+        output.properties.push({
+            'name': name.trim(),
+            'value': value.trim()
+        });
+        value = '';
+        name = '';
+        collectingValue = false;
+        collectingName = true;
+        continue
     }
     if (collectingName) {
         name += input[i];
@@ -37,38 +50,7 @@ for (let i = 0; i < input.length; i++) {
     if (collectingValue) {
         value += input[i];
     }
-    if (input[i] === ';') {
-        output.properties.push({
-            'name': name.replace('{', '').trim(),
-            'value': value.replace(':', '').replace(';', '').slice(1)
-        });
-        value = '';
-        name = '';
-        collectingValue = false;
-        collectingName = true;
-    }
+
 }
 
 console.log(output);
-
-
-// First version - without name & value
-
-// for (let i = 0; i < input.length; i++) {
-
-//     if (input[i] === '{') {
-//         output.selector = selector.trim();
-//         collectingSelector = false;
-//         collectingProperty = true;
-//     }
-//     if (collectingSelector) {
-//         selector += input[i];
-//     }
-//     if (collectingProperty) {
-//         property += input[i];
-//     }
-//     if (input[i] === ';') {
-//         output.properties.push(property);
-//         property = '';
-//     }
-// }
